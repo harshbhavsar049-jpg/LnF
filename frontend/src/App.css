@@ -137,8 +137,25 @@
 /* Device Manager Styles */
 .device-manager {
   min-height: 100vh;
-  background: #f5f5f5;
+  background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.8)),
+              url('../public/img.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
   padding-bottom: 40px;
+  position: relative;
+  color: #fff;
+}
+
+.device-manager::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(0, 255, 255, 0.1) 0%, rgba(255, 0, 255, 0.1) 100%);
+  pointer-events: none;
 }
 
 .content {
@@ -148,6 +165,8 @@
   display: grid;
   grid-template-columns: 400px 1fr;
   gap: 30px;
+  position: relative;
+  z-index: 1;
 }
 
 .form-section {
@@ -157,16 +176,19 @@
 }
 
 .device-form {
-  background: white;
+  background: rgba(16, 24, 39, 0.8);
   padding: 30px;
   border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+  border: 1px solid rgba(0, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
 }
 
 .device-form h3 {
   margin: 0 0 20px 0;
-  color: #333;
+  color: #fff;
   font-size: 20px;
+  text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
 }
 
 .device-form input,
@@ -175,30 +197,43 @@
   width: 100%;
   padding: 12px 15px;
   margin-bottom: 15px;
-  border: 1px solid #ddd;
+  background: rgba(16, 24, 39, 0.6);
+  border: 1px solid rgba(0, 255, 255, 0.2);
   border-radius: 8px;
   font-size: 14px;
-  transition: border-color 0.3s ease;
+  color: #fff;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.1);
 }
 
 .device-form input:focus,
 .device-form select:focus,
 .device-form textarea:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: rgba(0, 255, 255, 0.5);
+  box-shadow: 0 0 15px rgba(0, 255, 255, 0.2);
+  background: rgba(16, 24, 39, 0.8);
+}
+
+.device-form input::placeholder,
+.device-form textarea::placeholder {
+  color: rgba(255, 255, 255, 0.5);
 }
 
 .device-form button[type="submit"] {
   width: 100%;
   padding: 14px;
-  background: #667eea;
+  background: linear-gradient(135deg, rgba(0, 255, 255, 0.2), rgba(255, 0, 255, 0.2));
   color: white;
-  border: none;
+  border: 1px solid rgba(0, 255, 255, 0.3);
   border-radius: 8px;
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.3s ease;
+  transition: all 0.3s ease;
+  text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+  position: relative;
+  overflow: hidden;
 }
 
 .device-form button[type="submit"]:hover:not(:disabled) {
@@ -212,8 +247,11 @@
 
 .devices-section h3 {
   margin: 0 0 20px 0;
-  color: #333;
+  color: #00CED1;
   font-size: 20px;
+  text-shadow: 0 0 10px rgba(0, 206, 209, 0.5);
+  font-weight: 600;
+  letter-spacing: 0.5px;
 }
 
 .devices-list {
@@ -223,43 +261,62 @@
 }
 
 .device-card {
-  background: white;
+  background: rgba(16, 24, 39, 0.8);
   padding: 20px;
   border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  border-left: 4px solid #667eea;
-  transition: transform 0.2s ease;
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+  border: 1px solid rgba(0, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.device-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: #667eea;
+  box-shadow: 0 0 15px #667eea;
 }
 
 .device-card:hover {
-  transform: translateX(5px);
+  transform: translateY(-5px);
+  box-shadow: 0 0 30px rgba(0, 255, 255, 0.3);
 }
 
-.device-card.lost {
-  border-left-color: #ef4444;
+.device-card.lost::before {
+  background: #ef4444;
+  box-shadow: 0 0 15px #ef4444;
 }
 
-.device-card.found {
-  border-left-color: #10b981;
+.device-card.found::before {
+  background: #10b981;
+  box-shadow: 0 0 15px #10b981;
 }
 
 .device-info h4 {
   margin: 0 0 10px 0;
-  color: #333;
+  color: #fff;
   font-size: 18px;
+  text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
 }
 
 .device-info p {
   margin: 5px 0;
-  color: #666;
+  color: #d1d5db;
   font-size: 14px;
 }
 
 .device-info small {
   display: block;
   margin: 3px 0;
-  color: #999;
+  color: #9ca3af;
   font-size: 12px;
+  text-shadow: 0 0 5px rgba(0, 255, 255, 0.3);
 }
 
 .device-actions {
