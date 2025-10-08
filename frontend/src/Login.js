@@ -2,10 +2,6 @@ import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 
 export default function Login({ onLogin }) {
-  // Function to handle OAuth login
-  const handleOAuthLogin = (provider) => {
-    window.location.href = `http://localhost:5000/api/auth/${provider}`;
-  };
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -18,10 +14,14 @@ export default function Login({ onLogin }) {
     setError("");
 
     try {
+      // Clear any existing auth data
+      localStorage.clear();
+      
       const response = await fetch('http://localhost:5000/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json'
         },
         body: JSON.stringify({ username, password })
       });
@@ -85,26 +85,6 @@ export default function Login({ onLogin }) {
             {loading ? "Signing in..." : "Sign in"}
           </button>
         </form>
-
-        <div className="oauth-container">
-          <p className="oauth-divider">OR</p>
-          <button 
-            type="button" 
-            className="oauth-button google-button"
-            onClick={() => handleOAuthLogin('google')}
-          >
-            <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google" />
-            Sign in with Google
-          </button>
-          <button 
-            type="button" 
-            className="oauth-button facebook-button"
-            onClick={() => handleOAuthLogin('facebook')}
-          >
-            <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook" />
-            Sign in with Facebook
-          </button>
-        </div>
 
         <p>
           Don't have an account?{" "}

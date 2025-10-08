@@ -49,20 +49,46 @@ export default function DeviceManager({ onLogout }) {
   const defaultCenter = [23.0225, 72.5714]; // Ahmedabad
 
   useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      onLogout();
+      return;
+    }
+
     const fetchDevices = async () => {
       try {
-        const res = await API.get('/devices');
-        setDevices(res.data);
+        const res = await API.get('/devices', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        if (res.data) {
+          setDevices(res.data);
+        }
       } catch (e) {
         console.error('Error fetching devices:', e);
+        if (e.response?.status === 401) {
+          localStorage.removeItem('token');
+          localStorage.removeItem('isLoggedIn');
+          onLogout();
+        } else {
+          const errorMessage = e.response?.data?.message || e.response?.data?.error || e.message;
+          alert('Failed to fetch devices: ' + errorMessage);
+        }
       }
     };
     fetchDevices();
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => setUserLocation({ lat: position.coords.latitude, lng: position.coords.longitude }),
-        (error) => console.log('Location access denied:', error)
+        (error) => {
+          console.error('Location access denied:', error);
+          alert('Please enable location services to use tracking features');
+        },
+        { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
       );
+    } else {
+      alert('Geolocation is not supported by your browser');
     }
   }, []);
 
@@ -177,13 +203,14 @@ export default function DeviceManager({ onLogout }) {
   const handleStatusToggle = async (id, currentStatus) => {
     const newStatus = currentStatus === 'lost' ? 'found' : 'lost';
     try {
-      // THIS BLOCK IS NOW FIXED
-      const res = await API.put(`/devices/${id}`, { status: newStatus });
-      setDevices(devices.map(d => d.id === id ? { ...d, status: res.data.status } : d));
-      alert(`Device marked as ${newStatus}!`);
-      if (newStatus === 'found' && trackingDevice?.id === id) stopTracking();
+      const res = await API.patch(`/devices/${id}/status`, { status: newStatus });
+      if (res.status === 200) {
+        setDevices(devices.map(d => d.id === id ? { ...d, status: res.data.status } : d));
+        alert(`Device marked as ${newStatus}!`);
+        if (newStatus === 'found' && trackingDevice?.id === id) stopTracking();
+      }
     } catch (err) {
-      alert('Failed to update status');
+      alert('Failed to update status: ' + (err.response?.data?.message || err.message));
     }
   };
   
@@ -200,6 +227,10 @@ export default function DeviceManager({ onLogout }) {
   };
 
   const handleLogout = () => {
+    // Clear all auth-related data
+    localStorage.removeItem('token');
+    localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem('username');
     onLogout();
     navigate('/login');
   };

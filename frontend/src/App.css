@@ -712,40 +712,42 @@
   right: 0;
 }
 
-.oauth-button {
+.social-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.social-button {
   width: 100%;
   padding: 12px;
-  margin-bottom: 10px;
-  border: 1px solid #ddd;
+  border: 1px solid #e0e0e0;
   border-radius: 8px;
   background: white;
   cursor: pointer;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 500;
+  color: #444;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  transition: all 0.3s;
+  gap: 12px;
+  transition: all 0.2s ease;
 }
 
-.oauth-button:hover {
-  background: #f9f9f9;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+.social-button:hover {
+  background: #f8f9fa;
+  border-color: #ddd;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.oauth-button img {
-  width: 20px;
-  height: 20px;
+.social-icon {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
 }
 
-.google-button {
-  color: #333;
-}
-
-.facebook-button {
-  color: #1877f2;
-}
 .auth-container {
   min-height: 100vh;
   display: flex;

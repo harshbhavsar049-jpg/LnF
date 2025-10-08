@@ -1,10 +1,35 @@
 import React, { useState, useEffect } from "react";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { 
+  createBrowserRouter, 
+  RouterProvider, 
+  Navigate,
+  createRoutesFromElements,
+  Route
+} from "react-router-dom";
 import Login from "./Login";
 import Register from "./Register";
 import DeviceManager from "./DeviceManager";
 import Dashboard from "./Dashboard";
 import "./App.css";
+
+// Enable v7 features
+const router = createBrowserRouter(
+  createRoutesFromElements(
+    <>
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/app" element={<DeviceManager />} />
+      <Route path="/dashboard" element={<Dashboard />} />
+      <Route path="/" element={<Navigate to="/login" replace />} />
+    </>
+  ),
+  {
+    future: {
+      v7_startTransition: true,
+      v7_relativeSplatPath: true
+    }
+  }
+);
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -27,10 +52,10 @@ function App() {
   };
 
   const handleLogout = () => {
+    // Clear all auth state
     setIsLoggedIn(false);
-    localStorage.removeItem("isLoggedIn");
-    localStorage.removeItem("token");
-    localStorage.removeItem("username");
+    localStorage.clear(); // Clear all localStorage items
+    window.location.href = '/login'; // Force a full page reload
   };
 
   if (loading) {
@@ -41,52 +66,41 @@ function App() {
     );
   }
 
-  return (
-    <BrowserRouter>
-      <Routes>
+  // Wrap the router with auth logic
+  const routes = createBrowserRouter(
+    createRoutesFromElements(
+      <>
         <Route 
           path="/login" 
-          element={
-            isLoggedIn ? 
-            <Navigate to="/app" replace /> : 
-            <Login onLogin={handleLogin} />
-          } 
+          element={isLoggedIn ? <Navigate to="/app" replace /> : <Login onLogin={handleLogin} />} 
         />
         <Route 
           path="/register" 
-          element={
-            isLoggedIn ? 
-            <Navigate to="/app" replace /> : 
-            <Register />
-          } 
+          element={isLoggedIn ? <Navigate to="/app" replace /> : <Register />} 
         />
         <Route 
           path="/app" 
-          element={
-            isLoggedIn ? 
-            <DeviceManager onLogout={handleLogout} /> : 
-            <Navigate to="/login" replace />
-          } 
+          element={isLoggedIn ? <DeviceManager onLogout={handleLogout} /> : <Navigate to="/login" replace />} 
         />
         <Route 
           path="/dashboard" 
-          element={
-            isLoggedIn ? 
-            <Dashboard onLogout={handleLogout} /> : 
-            <Navigate to="/login" replace />
-          } 
+          element={isLoggedIn ? <Dashboard onLogout={handleLogout} /> : <Navigate to="/login" replace />} 
         />
         <Route 
           path="/" 
-          element={
-            isLoggedIn ? 
-            <Navigate to="/app" replace /> : 
-            <Navigate to="/login" replace />
-          } 
+          element={isLoggedIn ? <Navigate to="/app" replace /> : <Navigate to="/login" replace />} 
         />
-      </Routes>
-    </BrowserRouter>
+      </>
+    ),
+    {
+      future: {
+        v7_startTransition: true,
+        v7_relativeSplatPath: true
+      }
+    }
   );
+
+  return <RouterProvider router={routes} />;
 }
 
 export default App;
